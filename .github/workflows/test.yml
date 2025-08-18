@@ -73,10 +73,11 @@ jobs:
         run: |
           mkdir -p frontend/dist
           touch frontend/dist/index.html
-      - name: Install golangci-lint
+      - name: Install golangci-lint v2
         run: |
-          # Install a golangci-lint binary built with the current Go toolchain
-          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+          # Install a specific golangci-lint v2 release so it matches the repo config
+          # Pinning to a v2.x release ensures we run the v2 binary (config is v2)
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v2.52.0
           echo "GOPATH: $(go env GOPATH)";
           export PATH=$(go env GOPATH)/bin:$PATH
       - name: Run golangci-lint
