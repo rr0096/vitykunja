@@ -26,6 +26,8 @@ jobs:
 
     - name: Run go test
       run: |
+        # Ensure module files are up-to-date in CI
+        go mod tidy
         go test ./... -v
 
     - name: Build
