@@ -83,10 +83,17 @@ jobs:
           touch frontend/dist/index.html
       - name: Install golangci-lint v2
         run: |
-          # Install a specific golangci-lint v2 release so it matches the repo config
-          # Pinning to a v2.x release ensures we run the v2 binary (config is v2)
-          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v2.52.0
-          echo "GOPATH: $(go env GOPATH)";
+          # Download a specific golangci-lint v2 release and install it to GOPATH/bin
+          TAG=v2.52.0
+          VERSION=2.52.0
+          ARCH=linux-amd64
+          URL="https://github.com/golangci/golangci-lint/releases/download/${TAG}/golangci-lint-${VERSION}-${ARCH}.tar.gz"
+          echo "Downloading $URL"
+          curl -sSLo /tmp/golangci-lint.tar.gz "$URL"
+          tar -xzf /tmp/golangci-lint.tar.gz -C /tmp
+          install -m 0755 /tmp/golangci-lint-${VERSION}-${ARCH}/golangci-lint $(go env GOPATH)/bin/golangci-lint
+          echo "Installed golangci-lint version:"
+          $(go env GOPATH)/bin/golangci-lint --version || true
           export PATH=$(go env GOPATH)/bin:$PATH
       - name: Run golangci-lint
         run: |
