@@ -73,10 +73,15 @@ jobs:
         run: |
           mkdir -p frontend/dist
           touch frontend/dist/index.html
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@4afd733a84b1f43292c63897423277bb7f4313a9 # v8
-        with:
-          version: v2.4.0
+      - name: Install golangci-lint
+        run: |
+          # Install a golangci-lint binary built with the current Go toolchain
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+          echo "GOPATH: $(go env GOPATH)";
+          export PATH=$(go env GOPATH)/bin:$PATH
+      - name: Run golangci-lint
+        run: |
+          golangci-lint run --timeout 5m
 
   api-check-translations:
     runs-on: ubuntu-latest
