@@ -11,12 +11,8 @@ import (
 )
 
 func TestMCPHandler_YAML(t *testing.T) {
-	// Ensure handler uses explicit file by setting MCP_FILE
-	path := "/workspaces/vitykunja/docs/mcp.yaml"
-	if _, err := os.Stat(path); err != nil {
-		t.Fatalf("required file missing: %v", err)
-	}
-	if err := os.Setenv("MCP_FILE", path); err != nil {
+	// Use embedded file for testing instead of hardcoded path
+	if err := os.Setenv("MCP_FILE", ""); err != nil {
 		t.Fatalf("failed to set env: %v", err)
 	}
 
@@ -34,11 +30,8 @@ func TestMCPHandler_YAML(t *testing.T) {
 }
 
 func TestMCPHandler_JSON(t *testing.T) {
-	path := "/workspaces/vitykunja/docs/mcp.yaml"
-	if _, err := os.Stat(path); err != nil {
-		t.Fatalf("required file missing: %v", err)
-	}
-	if err := os.Setenv("MCP_FILE", path); err != nil {
+	// Use embedded file for testing instead of hardcoded path
+	if err := os.Setenv("MCP_FILE", ""); err != nil {
 		t.Fatalf("failed to set env: %v", err)
 	}
 
