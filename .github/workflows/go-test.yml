@@ -16,7 +16,13 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.20'
+        # Use a recent Go release to satisfy modules that require Go >= 1.21
+        go-version: '1.25'
+
+    - name: Prepare frontend files
+      run: |
+        mkdir -p frontend/dist
+        touch frontend/dist/index.html
 
     - name: Run go test
       run: |
