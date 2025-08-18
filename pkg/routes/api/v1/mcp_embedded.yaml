@@ -1,0 +1,113 @@
+version: 1
+title: Vitykunja MCP (Model Context Protocol)
+description: |
+  Archivo MCP que define los modelos y acciones que una IA puede usar para interactuar
+  con Vitykunja. Este YAML es la "fuente de verdad" para agentes que quieran leer y
+  manipular tareas y proyectos.
+
+models:
+  Task:
+    description: Representa una tarea en Vitykunja
+    fields:
+      id:
+        type: string
+        description: ID única de la tarea
+      title:
+        type: string
+        description: Título breve de la tarea
+      description:
+        type: string
+        description: Descripción larga de la tarea (markdown)
+      dueDate:
+        type: string
+        format: date-time
+        description: Fecha/hora de vencimiento (RFC3339)
+      projectId:
+        type: string
+        description: ID del proyecto asociado
+      completed:
+        type: boolean
+        description: Indicador de tarea completada
+      googleEventId:
+        type: string
+        description: (opcional) ID del evento en Google Calendar, si está sincronizado
+
+  Project:
+    description: Representa un proyecto/agenda en Vitykunja
+    fields:
+      id:
+        type: string
+        description: ID única del proyecto
+      title:
+        type: string
+        description: Nombre del proyecto
+      description:
+        type: string
+        description: Descripción del proyecto
+      calendarId:
+        type: string
+        description: (opcional) ID del calendario de Google asociado para sincronización
+
+actions:
+  createTask:
+    description: Crea una nueva tarea en Vitykunja
+    method: POST
+    path: /api/v1/tasks
+    request:
+      required:
+        - title
+        - projectId
+      properties:
+        title:
+          type: string
+        projectId:
+          type: string
+        description:
+          type: string
+        dueDate:
+          type: string
+          format: date-time
+    response: Task
+
+  findTasks:
+    description: Busca tareas por filtros simples
+    method: GET
+    path: /api/v1/tasks
+    parameters:
+      - name: projectId
+        in: query
+        type: string
+      - name: q
+        in: query
+        type: string
+        description: Busqueda por texto en título/descripcion
+    response:
+      type: array
+      items: Task
+
+  updateTask:
+    description: Actualiza campos de una tarea existente
+    method: PATCH
+    path: /api/v1/tasks/{id}
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+    request:
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        dueDate:
+          type: string
+          format: date-time
+        completed:
+          type: boolean
+    response: Task
+
+notes:
+  - Este archivo es una especificación inicial pensada para ser consumida por agentes de IA.
+  - Cualquier cambio en la API pública que afecte a estas acciones debe versionarse y reflejarse
+    aquí.

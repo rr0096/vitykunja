@@ -21,17 +21,31 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 )
 
 // DownloadFile downloads a file and returns its contents
-func DownloadFile(url string) (buf *bytes.Buffer, err error) {
-	return DownloadFileWithHeaders(url, nil)
+func DownloadFile(urlStr string) (buf *bytes.Buffer, err error) {
+	return DownloadFileWithHeaders(urlStr, nil)
 }
 
 // DownloadFileWithHeaders downloads a file and allows you to pass in headers
-func DownloadFileWithHeaders(url string, headers http.Header) (buf *bytes.Buffer, err error) {
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
+func DownloadFileWithHeaders(urlStr string, headers http.Header) (buf *bytes.Buffer, err error) {
+	// Support local file URLs in tests: file:///abs/path/to/file
+	if parsed, errp := url.Parse(urlStr); errp == nil {
+		if parsed.Scheme == "file" {
+			// On file URLs, parsed.Path is the absolute path
+			b, err := os.ReadFile(parsed.Path)
+			if err != nil {
+				return nil, err
+			}
+			buf = bytes.NewBuffer(b)
+			return buf, nil
+		}
+	}
+
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, urlStr, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -55,13 +69,13 @@ func DownloadFileWithHeaders(url string, headers http.Header) (buf *bytes.Buffer
 }
 
 // DoPost makes a form encoded post request
-func DoPost(url string, form url.Values) (resp *http.Response, err error) {
-	return DoPostWithHeaders(url, form, map[string]string{})
+func DoPost(urlStr string, form url.Values) (resp *http.Response, err error) {
+	return DoPostWithHeaders(urlStr, form, map[string]string{})
 }
 
 // DoPostWithHeaders does an api request and allows to pass in arbitrary headers
-func DoPostWithHeaders(url string, form url.Values, headers map[string]string) (resp *http.Response, err error) {
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, url, strings.NewReader(form.Encode()))
+func DoPostWithHeaders(urlStr string, form url.Values, headers map[string]string) (resp *http.Response, err error) {
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, urlStr, strings.NewReader(form.Encode()))
 	if err != nil {
 		return
 	}
