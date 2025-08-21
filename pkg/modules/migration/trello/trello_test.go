@@ -35,6 +35,9 @@ import (
 func getTestBoard(t *testing.T) ([]*trello.Board, time.Time) {
 
 	config.InitConfig()
+	// Ensure tests look up files from the repository root when running under `go test`
+	// Many tests in the repo set this explicitly to avoid go's temporary build dirs.
+	config.ServiceRootpath.Set(os.Getenv("VIKUNJA_SERVICE_ROOTPATH"))
 
 	time1, err := time.Parse(time.RFC3339Nano, "2014-09-26T08:25:05Z")
 	require.NoError(t, err)
@@ -76,7 +79,7 @@ func getTestBoard(t *testing.T) ([]*trello.Board, time.Time) {
 									Name:     "Testimage.jpg",
 									IsUpload: true,
 									MimeType: "image/jpg",
-									URL:      "https://vikunja.io/testimage.jpg",
+									URL:      "file://" + config.ServiceRootpath.GetString() + "/pkg/modules/migration/testimage.jpg",
 								},
 								{
 									ID:       "7cc71b16f0c7a57bed3c94e9",
@@ -232,7 +235,7 @@ func getTestBoard(t *testing.T) ([]*trello.Board, time.Time) {
 			},
 		},
 	}
-	trelloData[0].Prefs.BackgroundImage = "https://vikunja.io/testimage.jpg" // Using an image which we are hosting, so it'll still be up
+	trelloData[0].Prefs.BackgroundImage = "file://" + config.ServiceRootpath.GetString() + "/pkg/modules/migration/testimage.jpg" // Use local file for deterministic tests
 
 	return trelloData, time1
 }

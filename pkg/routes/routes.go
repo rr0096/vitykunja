@@ -199,6 +199,9 @@ func RegisterRoutes(e *echo.Echo) {
 
 	setupStaticFrontendFilesHandler(e)
 
+	// Expose MCP at the root for discovery (also available under /api/v1/mcp)
+	e.GET("/mcp", apiv1.MCP)
+
 	// CORS
 	if config.CorsEnable.GetBool() {
 		log.Debugf("CORS enabled with origins: %s", strings.Join(config.CorsOrigins.GetStringSlice(), ", "))
@@ -252,6 +255,9 @@ func registerAPIRoutes(a *echo.Group) {
 	// Docs
 	n.GET("/docs.json", apiv1.DocsJSON)
 	n.GET("/docs", apiv1.RedocUI)
+
+	// MCP specification (Model Context Protocol)
+	n.GET("/mcp", apiv1.MCP)
 
 	// Prometheus endpoint
 	setupMetrics(n)

@@ -33,6 +33,9 @@ import (
 func TestConvertTodoistToVikunja(t *testing.T) {
 
 	config.InitConfig()
+	// Ensure tests look up files from the repository root when running under `go test`
+	// Many tests in the repo set this explicitly to avoid go's temporary build dirs.
+	config.ServiceRootpath.Set(os.Getenv("VIKUNJA_SERVICE_ROOTPATH"))
 
 	time1, err := time.Parse(time.RFC3339Nano, "2014-09-26T08:25:05Z")
 	require.NoError(t, err)
@@ -87,6 +90,9 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 
 		return item
 	}
+
+	// Use a deterministic local URL for file downloads in tests to avoid network dependency
+	testImageURL := "file://" + config.ServiceRootpath.GetString() + "/pkg/modules/migration/testimage.jpg"
 
 	testSync := &sync{
 		Projects: []*project{
@@ -248,7 +254,7 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 					FileName:    "file.md",
 					FileType:    "text/plain",
 					FileSize:    12345,
-					FileURL:     "https://vikunja.io/testimage.jpg", // Using an image which we are hosting, so it'll still be up
+					FileURL:     testImageURL,
 					UploadState: "completed",
 				},
 				Posted: time1,

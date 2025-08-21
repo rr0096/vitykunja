@@ -1,0 +1,13 @@
+name: 'Go Mod Tidy'
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tidy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Tidy Go Modules
+        run: go mod tidy

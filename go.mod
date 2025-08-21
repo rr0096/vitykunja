@@ -78,6 +78,7 @@ require (
 	golang.org/x/term v0.34.0
 	golang.org/x/text v0.28.0
 	gopkg.in/d4l3k/messagediff.v1 v1.2.1
+	gopkg.in/yaml.v3 v3.0.1
 	mvdan.cc/xurls/v2 v2.6.0
 	src.techknowlogick.com/xgo v1.8.1-0.20241105013731-313dedef864f
 	src.techknowlogick.com/xormigrate v1.7.1
@@ -161,7 +162,6 @@ require (
 	golang.org/x/tools v0.35.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
@@ -171,4 +171,4 @@ replace github.com/labstack/echo/v4 => github.com/kolaente/echo/v4 v4.0.0-202501
 
 go 1.23.0
 
-toolchain go1.25.0
+toolchain go1.24.4
